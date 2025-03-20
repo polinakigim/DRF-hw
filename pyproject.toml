@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "drf-hw"
+version = "0.1.0"
+description = ""
+authors = ["polinakigim <polinakigim@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.1.7"
+djangorestframework = "^3.15.2"
+psycopg2-binary = "^2.9.10"
+pillow = "^11.1.0"
+python-dotenv = "^1.0.1"
+isort = "^6.0.1"
+black = "^25.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
