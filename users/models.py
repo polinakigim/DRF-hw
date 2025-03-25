@@ -15,6 +15,11 @@ class User(AbstractUser):
         upload_to="users/avatars/", verbose_name="Аватар", blank=True, null=True
     )
 
+    def save(self, *args, **kwargs):
+        if self.is_superuser and not self.is_staff:
+            self.is_staff = True  # Суперпользователь должен быть staff
+        super().save(*args, **kwargs)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
