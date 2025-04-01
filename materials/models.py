@@ -1,5 +1,7 @@
 from django.db import models
 
+from config import settings
+
 
 class Course(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название курса")
@@ -11,6 +13,7 @@ class Course(models.Model):
         help_text="Загрузите превью курса",
     )
     description = models.TextField(blank=True, null=True, verbose_name="Описание курса")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = "Курс"
@@ -29,6 +32,7 @@ class Lesson(models.Model):
     )
     description = models.TextField(blank=True, null=True, verbose_name="Описание урока")
     link = models.URLField(max_length=150, verbose_name="Ссылка на урок")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = "Урок"

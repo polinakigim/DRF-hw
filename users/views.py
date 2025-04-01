@@ -1,9 +1,11 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from users.models import Payment
-from users.serializers import PaymentSerializer
+from users.models import Payment, User
+from users.serializers import PaymentSerializer, UserSerializer, UserRegisterSerializer
+
 
 class PaymentViewSet(ModelViewSet):
     queryset = Payment.objects.all()
@@ -57,3 +59,14 @@ class PaymentUpdateAPIView(UpdateAPIView):
 class PaymentDestroyAPIView(DestroyAPIView):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
+
+
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+class UserRegisterView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegisterSerializer
+    permission_classes = [AllowAny] # Регистрация доступна без авторизации
