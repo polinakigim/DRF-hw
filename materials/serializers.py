@@ -1,28 +1,38 @@
+from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
+from materials.validators import LinkToVideoValidator
 
 
-class CourseSerializer(ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
+    lessons = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all(), many=True)  # Простой список ID уроков
+    is_subscribed = serializers.SerializerMethodField()
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return Subscription.objects.filter(user=user, course=obj).exists()
+        return False
+
     class Meta:
         model = Course
-        fields = "__all__"
+        fields = '__all__'
 
 
-
-class LessonSerializer(ModelSerializer):
+class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
+        validators = [LinkToVideoValidator(field="link")]
 
-class CourseDetailSerializer(ModelSerializer):
-    number_of_lessons = SerializerMethodField()
-    lessons = LessonSerializer(many=True, read_only=True)
 
-    def get_number_of_lessons(self, obj):
-        return obj.lessons.count()
+class CourseDetailSerializer(serializers.ModelSerializer):
+    lessons_count = SerializerMethodField()
+
+    def get_lessons_count(self, lesson):
+        return Lesson.objects.filter.count(course=lesson.course)
 
     class Meta:
         model = Course
-        fields = ("name", "description", "number_of_lessons", "lessons",)
+        fields = ('name', 'description', 'lessons_count')
