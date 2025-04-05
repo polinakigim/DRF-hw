@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
-from users.models import User, Payment
+from users.models import User, Payment, Paying
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -48,3 +48,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class PayingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paying
+        fields = '__all__'

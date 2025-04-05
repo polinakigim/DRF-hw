@@ -137,3 +137,5 @@ if CACHE_ENABLED:
             "LOCATION": os.getenv("LOCATION"),
         }
     }
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
