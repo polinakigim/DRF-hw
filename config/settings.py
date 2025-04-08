@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from distutils.util import strtobool
 from pathlib import Path
 
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     "django_filters",
     'rest_framework_simplejwt',
     'drf_yasg',
+    "django_celery_beat",
 
     "users",
     "materials",
@@ -118,6 +120,24 @@ LOGIN_REDIRECT_URL = "mailing:home"
 LOGOUT_REDIRECT_URL = "mailing:home"
 
 LOGIN_URL = "users:login"
+
+# Настройки для Celery
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+CELERY_TIMEZONE = "Europe/Moscow"
+
+CELERY_TASK_TRACK_STARTED = True
+
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Настройки для Celery
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'materials.tasks.my_task',  # Путь к задаче
+        'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+    },
+}
 
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
