@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     'rest_framework_simplejwt',
+    'drf_yasg',
 
     "users",
     "materials",
@@ -136,3 +137,5 @@ if CACHE_ENABLED:
             "LOCATION": os.getenv("LOCATION"),
         }
     }
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
