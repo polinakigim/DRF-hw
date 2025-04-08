@@ -11,6 +11,7 @@ from materials.models import Course, Lesson, Subscription
 from materials.paginators import CustomPagination
 from materials.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
 from users.permissions import IsOwnerOrStaff, IsModerator
+from materials.tasks import send_course_update_mail
 
 
 class CourseViewSet(ModelViewSet):
@@ -31,6 +32,9 @@ class CourseViewSet(ModelViewSet):
             self.permission_classes = [AllowAny]
         return [permission() for permission in self.permission_classes]
 
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_course_update_mail.delay(course.id)
 
 class LessonCreateAPIView(CreateAPIView):
     serializer_class = LessonSerializer
@@ -76,7 +80,6 @@ class SubscriptionView(APIView):
             return Response({"detail": "course_id обязателен"}, status=status.HTTP_400_BAD_REQUEST)
 
         course_item = get_object_or_404(Course, id=course_id)
-
         subs_item = Subscription.objects.filter(user=request.user, course=course_item)
 
         if subs_item.exists():
