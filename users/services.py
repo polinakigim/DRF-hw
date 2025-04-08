@@ -19,12 +19,12 @@ def create_stripe_product(payment):
     stripe_product = stripe.Product.create(name=product_name)
     return stripe_product["id"]
 
-def create_stripe_price(amount):
+def create_stripe_price(product_id, amount):
     """Создает цену в Stripe."""
     return stripe.Price.create(
         currency="rub",
         unit_amount=int(amount * 100),
-        product_data={"name": "Paying"},
+        product=product_id,
     )
 
 def create_stripe_session(price):

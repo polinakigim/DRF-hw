@@ -79,7 +79,7 @@ class PayingCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         pay = serializer.save(user=self.request.user)
         stripe_product_id = create_stripe_product(pay)
-        price = create_stripe_price(stripe_product_id, pay)
+        price = create_stripe_price(stripe_product_id, pay.amount)
         session_id, payment_link = create_stripe_session(price)
         pay.session_id = session_id
         pay.link = payment_link
