@@ -24,10 +24,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_filters",
-    'rest_framework_simplejwt',
-    'drf_yasg',
+    "rest_framework_simplejwt",
+    "drf_yasg",
     "django_celery_beat",
-
     "users",
     "materials",
 ]
@@ -63,12 +62,13 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',
-                                       ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 DATABASES = {
@@ -122,8 +122,8 @@ LOGOUT_REDIRECT_URL = "mailing:home"
 LOGIN_URL = "users:login"
 
 # Настройки для Celery
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
 CELERY_TIMEZONE = TIME_ZONE
 
@@ -133,9 +133,11 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # Настройки для Celery
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
-        'task': 'materials.tasks.my_task',  # Путь к задаче
-        'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+    "block_users": {
+        "task": "users.tasks.deactivate_inactive_users",  # Путь к задаче
+        "schedule": timedelta(
+            minutes=10
+        ),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
 

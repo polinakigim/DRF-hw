@@ -9,9 +9,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import CustomPagination
-from materials.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
-from users.permissions import IsOwnerOrStaff, IsModerator
+from materials.serializers import (CourseDetailSerializer, CourseSerializer,
+                                   LessonSerializer)
 from materials.tasks import send_course_update_mail
+from users.permissions import IsModerator, IsOwnerOrStaff
 
 
 class CourseViewSet(ModelViewSet):
@@ -24,9 +25,9 @@ class CourseViewSet(ModelViewSet):
         return CourseSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        if self.action in ["create", "destroy"]:
             self.permission_classes = [IsOwnerOrStaff]
-        elif self.action in ['update', 'partial_update']:
+        elif self.action in ["update", "partial_update"]:
             self.permission_classes = [IsOwnerOrStaff, IsModerator]
         else:
             self.permission_classes = [AllowAny]
@@ -35,6 +36,7 @@ class CourseViewSet(ModelViewSet):
     def perform_update(self, serializer):
         course = serializer.save()
         send_course_update_mail.delay(course.id)
+
 
 class LessonCreateAPIView(CreateAPIView):
     serializer_class = LessonSerializer
@@ -69,7 +71,6 @@ class LessonDestroyAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrStaff]
 
 
-
 class SubscriptionView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -77,7 +78,9 @@ class SubscriptionView(APIView):
         course_id = request.data.get("course_id")
 
         if not course_id:
-            return Response({"detail": "course_id обязателен"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "course_id обязателен"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         course_item = get_object_or_404(Course, id=course_id)
         subs_item = Subscription.objects.filter(user=request.user, course=course_item)

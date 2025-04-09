@@ -1,9 +1,11 @@
+import os
+
 import stripe
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 stripe.api_key = os.getenv("STRIPE_API_KEY")
+
 
 def create_stripe_product(payment):
     """Функция создания продукта в Stripe."""
@@ -19,6 +21,7 @@ def create_stripe_product(payment):
     stripe_product = stripe.Product.create(name=product_name)
     return stripe_product["id"]
 
+
 def create_stripe_price(product_id, amount):
     """Создает цену в Stripe."""
     return stripe.Price.create(
@@ -27,11 +30,12 @@ def create_stripe_price(product_id, amount):
         product=product_id,
     )
 
+
 def create_stripe_session(price):
     """Создает сессию на оплату в Stripe."""
     session = stripe.checkout.Session.create(
         success_url="https://127.0.0.1:8000/",
-        line_items=[{"price": price.get('id'), "quantity": 1}],
+        line_items=[{"price": price.get("id"), "quantity": 1}],
         mode="payment",
     )
     return session.get("id"), session.get("url")
