@@ -9,6 +9,10 @@ class IsOwnerOrStaff(BasePermission):
         # 'obj' уже получен, используем его напрямую
         return request.user == obj.owner
 
+
 class IsModerator(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.groups.filter(name="Модераторы").exists()
+        return (
+            request.user.is_authenticated
+            and request.user.groups.filter(name="Модераторы").exists()
+        )
