@@ -1,6 +1,8 @@
 import os
+import sys
 from datetime import timedelta
 from distutils.util import strtobool
+from email.policy import default
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -13,7 +15,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = bool(strtobool(os.getenv("DEBUG", "False")))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -106,6 +108,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATICFILES_DIRS = (BASE_DIR / "static/",)
 
@@ -161,3 +164,11 @@ if CACHE_ENABLED:
     }
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default" : {
+            "ENGINE" : "django.db.backends"
+
+        }
+    }
