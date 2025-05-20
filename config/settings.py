@@ -2,7 +2,6 @@ import os
 import sys
 from datetime import timedelta
 from distutils.util import strtobool
-from email.policy import default
 from pathlib import Path
 
 from dotenv import load_dotenv
