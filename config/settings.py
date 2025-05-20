@@ -167,7 +167,8 @@ STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 if "test" in sys.argv:
     DATABASES = {
         "default" : {
-            "ENGINE" : "django.db.backends.sqlite3"
+            "ENGINE" : "django.db.backends.sqlite3",
+            "NAME" : BASE_DIR / "test_db.sqlite3",
 
         }
     }
