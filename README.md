@@ -15,6 +15,7 @@
 ```bash
 git clone <your-repo-url>
 cd <your-project-folder>
+
 ```
 
 2. Создайте виртуальное окружение и активируйте его:
