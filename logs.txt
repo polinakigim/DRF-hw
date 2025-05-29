@@ -1,0 +1,61 @@
+Pulling db (postgres:16)...
+16: Pulling from library/postgres
+Digest: sha256:64d54200dec0cb9d2d3e43f094e9aa47e7e6c8c246828a512969cccc39b5afb2
+Status: Downloaded newer image for postgres:16
+Building web
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  718.3kB
+Step 1/9 : FROM python:3.12-slim
+3.12-slim: Pulling from library/python
+254e724d7786: Already exists
+0c2a5709b400: Pulling fs layer
+a3d5ed709dd6: Pulling fs layer
+3d97007bfc7f: Pulling fs layer
+3d97007bfc7f: Verifying Checksum
+3d97007bfc7f: Download complete
+0c2a5709b400: Verifying Checksum
+0c2a5709b400: Download complete
+a3d5ed709dd6: Verifying Checksum
+a3d5ed709dd6: Download complete
+0c2a5709b400: Pull complete
+a3d5ed709dd6: Pull complete
+3d97007bfc7f: Pull complete
+Digest: sha256:31a416db24bd8ade7dac5fd5999ba6c234d7fa79d4add8781e95f41b187f4c9a
+Status: Downloaded newer image for python:3.12-slim
+ ---> 8c6ce09c052b
+Step 2/9 : WORKDIR /app
+ ---> Running in 838258f8d067
+ ---> Removed intermediate container 838258f8d067
+ ---> 92732d2bfc5f
+Step 3/9 : RUN apt-get update     && apt-get install -y gcc libpq-dev     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+ ---> Running in e5c5c6ab007e
+Ign:1 http://deb.debian.org/debian bookworm InRelease
+Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Ign:1 http://deb.debian.org/debian bookworm InRelease
+Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Ign:1 http://deb.debian.org/debian bookworm InRelease
+Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Err:1 http://deb.debian.org/debian bookworm InRelease
+  Temporary failure resolving 'deb.debian.org'
+Err:2 http://deb.debian.org/debian bookworm-updates InRelease
+  Temporary failure resolving 'deb.debian.org'
+Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+  Temporary failure resolving 'deb.debian.org'
+Reading package lists...
+[91mW[0m[91m: Failed to fetch http://deb.debian.org/debian/dists/bookworm/InRelease  Temporary failure resolving 'deb.debian.org'
+W: Failed to fetch http://deb.debian.org/debian/dists/bookworm-updates/InRelease  Temporary failure resolving 'deb.debian.org'
+W: Failed to fetch http://deb.debian.org/debian-security/dists/bookworm-security/InRelease  Temporary failure resolving 'deb.debian.org'
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+[0mReading package lists...
+Building dependency tree...
+Reading state information...
+[91mE: Unable to locate package gcc
+E: Unable to locate package libpq-dev
+[0mThe command '/bin/sh -c apt-get update     && apt-get install -y gcc libpq-dev     && apt-get clean     && rm -rf /var/lib/apt/lists/*' returned a non-zero code: 100
+Service 'web' failed to build : Build failed

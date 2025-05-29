@@ -1,0 +1,124 @@
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
+
+from materials.models import Course, Lesson
+
+
+class CustomUserManager(BaseUserManager):
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self._create_user(email, password, **extra_fields)
+
+
+class User(AbstractUser):
+    username = None
+    email = models.EmailField(unique=True, verbose_name="Email")
+    phone_number = models.CharField(
+        max_length=20, verbose_name="Номер телефона", blank=True, null=True
+    )
+    city = models.CharField(max_length=100, verbose_name="Город", blank=True, null=True)
+    avatar = models.ImageField(
+        upload_to="users/avatars/", verbose_name="Аватар", blank=True, null=True
+    )
+
+    objects = CustomUserManager()
+
+    def save(self, *args, **kwargs):
+        if self.is_superuser and not self.is_staff:
+            self.is_staff = True  # Суперпользователь должен быть staff
+        super().save(*args, **kwargs)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+        ordering = ["email"]
+
+
+class Payment(models.Model):
+    PAYMENT_METHOD_CHOICES = [
+        ("наличные", "наличные"),
+        ("перевод на счет", "перевод на счет"),
+    ]
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    payment_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата оплаты")
+    paid_course = models.ForeignKey(
+        Course,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        verbose_name="Оплаченный курс",
+    )
+    paid_lesson = models.ForeignKey(
+        Lesson,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        verbose_name="Оплаченный урок",
+    )
+    payment_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Сумма оплаты"
+    )
+    payment_method = models.CharField(
+        max_length=50, choices=PAYMENT_METHOD_CHOICES, verbose_name="Способ оплаты"
+    )
+
+
+class Paying(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Пользователь",
+    )
+    paid_course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Оплаченный курс",
+    )
+    paid_lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Оплаченный урок",
+    )
+
+    amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
+    session_id = models.CharField(
+        null=True, blank=True, max_length=500, verbose_name="ID сессии"
+    )
+    link = models.URLField(null=True, blank=True, max_length=500)
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплаты"
